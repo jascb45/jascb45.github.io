@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>错误</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: #0a0a2a;
+            color: white;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .alert {
+            position: fixed;
+            background: linear-gradient(45deg, #ff4444, #ff6666);
+            border: 2px solid #ff0000;
+            border-radius: 6px;
+            padding: 12px;
+            width: 220px;
+            min-height: 120px;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
+            z-index: 1000;
+            cursor: move;
+            animation: shake 0.3s ease-in-out;
+        }
+        
+        .alert h3 {
+            color: #fff;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .alert p {
+            font-size: 12px;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+        
+        .alert button {
+            background: #fff;
+            color: #ff4444;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 11px;
+            float: right;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-3px); }
+            75% { transform: translateX(3px); }
+        }
+    </style>
+</head>
+<body>
+    <script>
+        let alertCount = 0;
+        const maxAlerts = 100; // 修改这里调整弹窗总数
+        const alertMessages = [
+            "⚠️ 系统错误：心跳异常！",
+            "🚨 警告：笑容导致过载",
+            "❌ 故障：无法停止想你",
+            "💾 内存溢出：身影占满空间",
+            "🔥 CPU过热：心跳加速",
+            "📡 网络中断：连接不到你的心",
+            "🛡️ 安全警告：入侵我的思绪",
+            "💥 程序崩溃：被美丽击溃",
+            "🗑️ 数据丢失：忘记其他人",
+            "🔐 权限错误：需要你的授权",
+            "🔄 系统重启：初次心动",
+            "🧹 缓存清空：只保留你",
+            "🔥 防火墙突破：眼神穿透防御",
+            "💿 磁盘已满：太多你的照片",
+            "🎯 目标锁定：只注视你",
+            "💫 传感器异常：检测到心动",
+            "🚩 旗帜异常：已为你倾倒",
+            "🎭 角色混乱：只想做你的主角",
+            "🌈 光谱异常：你是唯一色彩",
+            "💖 最终警告：ERROR"
+        ];
+        
+        function createAlert() {
+            if (alertCount >= maxAlerts) {
+                // 弹窗结束后执行你的代码
+                alert("弹窗结束！这里可以写你的后续逻辑");
+                return;
+            }
+            
+            const alert = document.createElement('div');
+            alert.className = 'alert';
+            
+            // 随机位置，允许部分超出屏幕
+            const randomX = Math.random() * (window.innerWidth + 100) - 50;
+            const randomY = Math.random() * (window.innerHeight + 100) - 50;
+            
+            alert.style.left = randomX + 'px';
+            alert.style.top = randomY + 'px';
+            
+            alert.innerHTML = `
+                <h3>${alertCount < 15 ? '⚠️ 系统警告' : '💖 特别提醒'}</h3>
+                <p>${alertMessages[alertCount]}</p >
+                <button onclick="this.parentElement.remove()">确定</button>
+            `;
+            
+            document.body.appendChild(alert);
+            alertCount++;
+            
+            // 让弹窗可拖动
+            makeDraggable(alert);
+            
+            // 弹窗生成速度 - 修改这里的数值调整速度
+            const nextDelay = 50 + Math.random() * 150;
+            setTimeout(createAlert, nextDelay);
+            
+            // 随机自动关闭一些弹窗
+            if (Math.random() > 0.7) {
+                setTimeout(() => {
+                    if (alert.parentElement) {
+                        alert.remove();
+                    }
+                }, 2000 + Math.random() * 3000);
+            }
+        }
+        
+        function makeDraggable(element) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            
+            element.onmousedown = dragMouseDown;
+            
+            function dragMouseDown(e) {
+                e = e || window.event;
+                e.preventDefault();
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+                element.style.zIndex = '1001';
+            }
+            
+            function elementDrag(e) {
+                e = e || window.event;
+                e.preventDefault();
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                element.style.top = (element.offsetTop - pos2) + "px";
+                element.style.left = (element.offsetLeft - pos1) + "px";
+            }
+            
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+                element.style.zIndex = '1000';
+            }
+        }
+        
+        // 页面加载后开始弹窗
+        window.onload = function() {
+            setTimeout(createAlert, 800); // 修改这里调整开始延迟
+        };
+    </script>
+</body>
+</html>
